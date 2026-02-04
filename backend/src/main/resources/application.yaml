@@ -1,3 +1,19 @@
 spring:
   application:
     name: finance-manager
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/finance_manager?useSSL=false&serverTimezone=UTC
+    username: root
+    password: Dede0615
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+
+server:
+  port: 8080
