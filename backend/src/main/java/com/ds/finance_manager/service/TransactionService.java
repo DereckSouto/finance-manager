@@ -1,13 +1,10 @@
 package com.ds.finance_manager.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.ds.finance_manager.domain.Transaction;
-import com.ds.finance_manager.domain.TransactionType;
 import com.ds.finance_manager.dto.TransactionRequest;
 import com.ds.finance_manager.dto.TransactionResponse;
 import com.ds.finance_manager.exception.TransactionNotFoundException;
@@ -26,12 +23,12 @@ public class TransactionService {
 		return repository.findAll();
 	}
 
-	public Transaction create(String description, BigDecimal amount, LocalDate date, TransactionType type) {
-		if (amount.signum() <= 0) {
+	public Transaction create(TransactionRequest request) {
+		if (request.getAmount().signum() <= 0) {
 			throw new IllegalArgumentException("Amount must be positive!");
 		}
 
-		Transaction transaction = new Transaction(description, amount, date, type);
+		Transaction transaction = new Transaction(request.getDescription(), request.getAmount(), request.getDate(), request.getType());
 		return repository.save(transaction);
 	}
 	
