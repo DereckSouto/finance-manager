@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ds.finance_manager.domain.Transaction;
+import com.ds.finance_manager.domain.TransactionType;
 import com.ds.finance_manager.dto.TransactionRequest;
 import com.ds.finance_manager.dto.TransactionResponse;
 import com.ds.finance_manager.exception.TransactionNotFoundException;
@@ -28,25 +29,34 @@ public class TransactionService {
 			throw new IllegalArgumentException("Amount must be positive!");
 		}
 
-		Transaction transaction = new Transaction(request.getDescription(), request.getAmount(), request.getDate(), request.getType());
+		Transaction transaction = new Transaction(request.getDescription(), request.getAmount(), request.getDate(),
+				request.getType());
 		return repository.save(transaction);
 	}
-	
+
 	public TransactionResponse findById(Long id) {
-		Transaction transaction = repository.findById(id).orElseThrow(TransactionNotFoundException::new);
+		Transaction transaction = repository.findById(id).orElseThrow(() -> new TransactionNotFoundException(id));
 		return new TransactionResponse(transaction);
 	}
-	
+
 	public TransactionResponse update(Long id, TransactionRequest request) {
-		Transaction transaction = repository.findById(id).orElseThrow(TransactionNotFoundException::new);
+		Transaction transaction = repository.findById(id).orElseThrow(() -> new TransactionNotFoundException(id));
 		transaction.applyPatch(request);
 		repository.save(transaction);
 		return new TransactionResponse(transaction);
 	}
-	
+
 	public void delete(Long id) {
-		Transaction transaction = repository.findById(id).orElseThrow(TransactionNotFoundException::new);
+		Transaction transaction = repository.findById(id).orElseThrow(() -> new TransactionNotFoundException(id));
 		repository.delete(transaction);
+	}
+
+	public List<Transaction> filterTransactionsByType(TransactionType type) {
+		if (null != type) {
+			return repository.findByType(type);
+		}
+		return repository.findAll();
+
 	}
 
 }

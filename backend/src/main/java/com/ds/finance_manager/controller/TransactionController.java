@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ds.finance_manager.domain.Transaction;
+import com.ds.finance_manager.domain.TransactionType;
 import com.ds.finance_manager.dto.TransactionRequest;
 import com.ds.finance_manager.dto.TransactionResponse;
 import com.ds.finance_manager.service.TransactionService;
@@ -31,10 +33,10 @@ public class TransactionController {
 		this.service = service;
 	}
 	
-	@GetMapping
-	public List<TransactionResponse> getAll() {
-		return service.findAll().stream().map(TransactionResponse::new).toList();
-	}
+//	@GetMapping
+//	public List<TransactionResponse> getAll() {
+//		return service.findAll().stream().map(TransactionResponse::new).toList();
+//	}
 	
 	@GetMapping("/{id}")
 	public TransactionResponse getId(@PathVariable Long id) {
@@ -42,7 +44,7 @@ public class TransactionController {
 	}
 	
 	@PatchMapping("/{id}")
-	public ResponseEntity<Void> patch(@PathVariable Long id, @RequestBody TransactionRequest request) {
+	public ResponseEntity<Void> patch(@PathVariable Long id,@Valid @RequestBody TransactionRequest request) {
 		service.update(id, request);
 		return ResponseEntity.noContent().build();
 	}
@@ -59,6 +61,11 @@ public class TransactionController {
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(transaction.getId()).toUri();
 		TransactionResponse response = new TransactionResponse(transaction);
 		return ResponseEntity.created(location).body(response);
+	}
+	
+	@GetMapping
+	public List<TransactionResponse> filterByType(@RequestParam(value="type", required = false) TransactionType type) {
+		return service.filterTransactionsByType(type).stream().map(TransactionResponse::new).toList();
 	}
 	
 }

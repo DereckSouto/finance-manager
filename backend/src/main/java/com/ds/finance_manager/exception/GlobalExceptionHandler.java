@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -28,6 +29,14 @@ public class GlobalExceptionHandler {
 		ApiErrorResponse errorResponse = new ApiErrorResponse("Invalid input", LocalDateTime.now(), map);
 
 		return ResponseEntity.badRequest().body(errorResponse);
+	}
+
+	@ExceptionHandler(TransactionNotFoundException.class)
+	public ResponseEntity<ApiErrorResponse> handleTransactionNotFound(TransactionNotFoundException ex) {
+
+		ApiErrorResponse error = new ApiErrorResponse(ex.getMessage(), LocalDateTime.now());
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 
 }
