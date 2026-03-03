@@ -19,6 +19,7 @@ import com.ds.finance_manager.domain.Transaction;
 import com.ds.finance_manager.domain.TransactionType;
 import com.ds.finance_manager.dto.TransactionRequest;
 import com.ds.finance_manager.dto.TransactionResponse;
+import com.ds.finance_manager.dto.TransactionSummaryResponse;
 import com.ds.finance_manager.service.TransactionService;
 
 import jakarta.validation.Valid;
@@ -66,6 +67,11 @@ public class TransactionController {
 	@GetMapping
 	public List<TransactionResponse> filterByType(@RequestParam(value="type", required = false) TransactionType type) {
 		return service.filterTransactionsByType(type).stream().map(TransactionResponse::new).toList();
+	}
+	
+	@GetMapping("/summary")
+	public ResponseEntity<TransactionSummaryResponse> getSummary() {
+		return ResponseEntity.ok(service.getSummary());
 	}
 	
 }

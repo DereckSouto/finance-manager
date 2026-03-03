@@ -1,5 +1,6 @@
 package com.ds.finance_manager.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import com.ds.finance_manager.domain.Transaction;
 import com.ds.finance_manager.domain.TransactionType;
 import com.ds.finance_manager.dto.TransactionRequest;
 import com.ds.finance_manager.dto.TransactionResponse;
+import com.ds.finance_manager.dto.TransactionSummaryResponse;
 import com.ds.finance_manager.exception.TransactionNotFoundException;
 import com.ds.finance_manager.repository.TransactionRepository;
 
@@ -58,5 +60,13 @@ public class TransactionService {
 		return repository.findAll();
 
 	}
-
+	
+	public TransactionSummaryResponse getSummary() {
+		BigDecimal totalIncome = repository.sumByType(TransactionType.INCOME);
+		BigDecimal totalExpense = repository.sumByType(TransactionType.EXPENSE);
+		BigDecimal balance = totalIncome.subtract(totalExpense);
+		
+		return new TransactionSummaryResponse(totalIncome, totalExpense, balance);
+	}
+	
 }
